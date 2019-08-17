@@ -1,0 +1,5 @@
+{
+    "connectionString": "mongodb://localhost/testing",
+    "secret": "secret string",
+    "port": 3000
+}

@@ -1,0 +1,431 @@
+<!-- Author(s): Neo Kee Pin -->
+<% include ../partials/header %>
+<style>
+    .hide_element {
+        display: none;
+    }
+
+    .align_right {
+        float: right;
+        margin-right: 10px;
+    }
+
+    .custom_col {
+        width: 5%;
+    }
+    
+    .modal_style {
+        width: 90%;
+    }
+
+    .shift_but {
+        padding-left: 10px;
+    }
+</style>
+</head>
+
+<body>
+    <p class="menu-label" id="loggedInUser" name="<%= user.username %>" email="<%= user.email %>" contact="<%= user.contact_number %>"
+        role="admin"></p>
+    <div class="columns">
+        <div class="column is-one-fifth">
+            <button class="button align_right is-link" onclick="window.location.href='/admindashboard'">Back</button>
+        </div>
+        <div class="column is-three-fifths">
+            <table class="table is-fullwidth">
+                <thead>
+                    <tr>
+                        <th>
+                            <p>Name</p>
+                        </th>
+                        <th>
+                            <p>Email</p>
+                        </th>
+                        <th>
+                            <p>Telephone Number</p>
+                        </th>
+                        <th>
+                            <p>Contact Number</p>
+                        </th>
+                        <th>
+                            <p>Purpose</p>
+                        </th>
+                        <th>
+                        </th>
+                        <th>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="manage_resource_table">
+
+                    <!-- database details for resource details here -->
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column is-three-fifths"></div>
+        <div class="column is-one-fifth">
+            <button class="button is-success align_right" onclick="add_resource()">Add</button>
+        </div>
+    </div>
+    <div class="modal" id="edit_form">
+        <div class="modal-background" onclick="refs.edit_form.close()"></div>
+        <div class="modal-content">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Resource Information</p>
+                <button class="delete" onclick="refs.edit_form.close()" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body" id="logform">
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Name</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field modal_style">
+                            <div class="control">
+                                <input type="hidden" id="form_id">
+                                <input type="text" class="input" placeholder="Input Name" id="form_name">
+                            </div>
+                            <p class="help is-danger hide_element" id="name_danger">Input name is
+                                invalid.
+                                Can only take in alphabet
+                            </p>
+                            <p class="help is-danger hide_element" id="name_danger_empty">Input name is
+                                invalid.
+                                Cannot be empty.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Email</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field modal_style">
+                            <div class="control">
+                                <input type="text" class="input" placeholder="Input Name" id="form_email">
+                            </div>
+                            <p class="help is-danger hide_element" id="email_danger">Input email is
+                                invalid.
+                                Please enter a legit Email
+                            </p>
+                            <p class="help is-danger hide_element" id="email_danger_empty">Input email is
+                                invalid.
+                                Cannot be empty.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Telephone</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field modal_style">
+                            <div class="control">
+                                <input type="text" class="input" placeholder="Telephone Number" id="form_tel">
+                            </div>
+                        <p class="help is-danger hide_element" id="contact_danger">Input contact is
+                            invalid.
+                            Only accept numbers
+                        </p>
+                        <p class="help is-danger hide_element" id="contact_danger_empty">Input contact is
+                            invalid.
+                            Cannot be empty.
+                        </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">SMS No.</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field modal_style">
+                            <div class="control">
+                                <input type="text" class="input" placeholder="SMS Number" id="form_sms">
+                            </div>
+                            <p class="help is-danger hide_element" id="sms_danger">Input contact is
+                                invalid.
+                                Only accept numbers
+                            </p>
+                            <p class="help is-danger hide_element" id="sms_danger_empty">Input contact is
+                                invalid.
+                                Cannot be empty.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Purpose</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field modal_style">
+                            <div class="control">
+                                <textarea type="text" class="textarea" id="form_purpose"></textarea>
+                            </div>
+                            <p class="help is-danger hide_element" id="purpose_danger_empty">Cannot have no purpose!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <p>&nbsp;</p>
+                <div class="columns">
+                    <div class="column is-four-fifths"></div>
+                    <div class="custom_col"></div>
+                    <button class="button is-success" id="uploadButton" onClick="upload_db()">Upload</button>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        /*** Socket io ***/
+
+        //Instantiate client of socket.io into admin namespace
+        var client = io()
+
+        // Sever tells client to request for new resources data
+        client.on('getResourcesUpdate', function (msg) {
+            console.log(msg)
+            // Request to the server to return resources data then display data
+            client.emit('getResources', function (resourcesData) {
+                displayResources(resourcesData)
+            })
+        })
+
+        // Update resources db with new resource from input form 
+        function addResource(newResource) {
+            client.emit('addResource', newResource, function () {})
+        }
+
+        // Update exisitng resource from input form 
+        function updateResource(newResource) {
+            client.emit('updateResource', newResource, function () {})
+        }
+
+        // Remove resource from db based on id
+        function remove_resource(resource) {
+            resource_id = $(resource).parent().siblings('.resource_id').text()
+            client.emit('deleteResource', resource_id, function () {})
+        }
+
+        /*** Populate resources table ***/
+
+        function displayResources(resourcesData) {
+
+            $('#manage_resource_table').empty()
+
+            // Resources table
+            for (let data of resourcesData) {
+                tr = document.createElement('tr');
+                resource =
+                    "<td style='display:none' class='resource_id'><p>" + data.resource_id + "</p></td>" +
+                    "<td class='resource_name'><p>" + data.resource_name + "</p></td>" +
+                    "<td class='resource_email'><p>" + data.resource_email + "</p></td>" +
+                    "<td class='resource_tel'><p>" + data.resource_tel + "</p></td>" +
+                    "<td class='resource_sms'><p>" + data.resource_sms + "</p></td>" +
+                    "<td class='resource_purpose'><p>" + data.resource_purpose + "</p></td>" +
+                    "<td><button class='button is-info is-small' onclick='edit_resource(this)'>" +
+                    "<span>Edit</span><span class='icon is-small'><i class='fas fa-edit'></i></span>" +
+                    "</button></td>" +
+                    "<td><button class='button is-danger is-small' onclick='remove_resource(this)'>" +
+                    "<span>Delete</span><span class='icon is-small'><i class='fas fa-times'></i></span>" +
+                    "</button></td>";
+                tr.innerHTML = resource
+                $('#manage_resource_table').append(tr)
+
+            }
+
+        }
+
+        // For creating new resource or updating exisitng resource
+        function upload_db(resource_id) {
+            // check if the data is empty or not
+            // and check if the data has the right format
+            if (validate_data()) {
+                // update database
+
+                newResource = {
+                    resource_id: document.getElementById('form_id').value,
+                    resource_name: document.getElementById('form_name').value,
+                    resource_email: document.getElementById('form_email').value,
+                    resource_tel: document.getElementById('form_tel').value,
+                    resource_sms: document.getElementById('form_sms').value,
+                    resource_purpose: document.getElementById('form_purpose').value
+                }
+                console.log(newResource);
+
+                if (document.getElementById('form_id').value == "") {
+                    addResource(newResource)
+                } else {
+                    updateResource(newResource)
+                }
+
+                refs.edit_form.close();
+
+                return;
+            }
+        }
+
+        function edit_resource(resource) {
+
+            document.getElementById('form_id').value = $(resource).parent().siblings('.resource_id').text()
+            document.getElementById('form_name').value = $(resource).parent().siblings('.resource_name').text()
+            document.getElementById('form_email').value = $(resource).parent().siblings('.resource_email').text()
+            document.getElementById('form_tel').value = $(resource).parent().siblings('.resource_tel').text()
+            document.getElementById('form_sms').value = $(resource).parent().siblings('.resource_sms').text()
+            document.getElementById('form_purpose').value = $(resource).parent().siblings('.resource_purpose').text()
+            refs.edit_form.open();
+
+        }
+
+        var refs = {
+            edit_form: {
+                open: function () {
+                    document.getElementById('edit_form').classList.add('is-active');
+                },
+                close: function () {
+                    document.getElementById('edit_form').classList.remove('is-active');
+                    clear_form();
+                }
+            }
+        }
+
+
+        function add_resource() {
+            refs.edit_form.open();
+        }
+
+        function clear_form() {
+            document.getElementById('form_id').value = "";
+            document.getElementById('form_name').value = "";
+            document.getElementById('form_email').value = "";
+            document.getElementById('form_tel').value = "";
+            document.getElementById('form_sms').value = "";
+            document.getElementById('form_purpose').value = "";
+        }
+
+
+        function checking_true(arr) {
+            return arr == true;
+        }
+
+        function validate_data() {
+            var flag = [];
+            flag.push(name_validation("form_name") ? true : false);
+            flag.push(email_validation("form_email") ? true : false);
+            flag.push(contact_validation("form_tel") ? true : false);
+            flag.push(sms_validation("form_sms") ? true : false);
+            flag.push(purpose_validation("form_purpose") ? true : false);
+            console.log(flag);
+
+            if (!flag.every(checking_true)) {
+                return false;
+            }
+            return true;
+        }
+
+        function name_validation(id) {
+            var input = document.getElementById(id).value;
+            var pattern = /^[a-zA-Z-,]+(\s{0,1}[a-zA-Z-, ])*$/;
+            if (input.match(pattern) == null && input != "") {
+                document.getElementById(id).classList.add("is-warning");
+                $('#name_danger').show();
+                $('#name_danger_empty').hide();
+                return false;
+            } else if (input == "") {
+                document.getElementById(id).classList.add("is-warning");
+                $('#name_danger_empty').show();
+                $('#name_danger').hide();
+                return false;
+            } else {
+                document.getElementById(id).classList.remove("is-warning");
+                $('#name_danger').hide();
+                $('#name_danger_empty').hide();
+                return true;
+            }
+        }
+
+        function contact_validation(id) {
+            var input = document.getElementById(id).value;
+            var pattern = /^([0-9]+)$/;
+            if (input.match(pattern) == null && input != "") {
+                document.getElementById(id).classList.add("is-warning");
+                $('#sms_danger').show();
+                $('#sms_danger_empty').hide();
+                return false;
+            } else if (input == "") {
+                document.getElementById(id).classList.add("is-warning");
+                $('#sms_danger_empty').show();
+                $('#sms_danger').hide();
+                return false;
+            } else {
+                document.getElementById(id).classList.remove("is-warning");
+                $('#sms_danger').hide();
+                $('#sms_danger_empty').hide();
+                return true;
+            }
+        }
+
+        function sms_validation(id) {
+            var input = document.getElementById(id).value;
+            var pattern = /^([0-9]+)$/;
+            if (input.match(pattern) == null && input != "") {
+                document.getElementById(id).classList.add("is-warning");
+                $('#contact_danger').show();
+                $('#contact_danger_empty').hide();
+                return false;
+            } else if (input == "") {
+                document.getElementById(id).classList.add("is-warning");
+                $('#contact_danger_empty').show();
+                $('#contact_danger').hide();
+                return false;
+            } else {
+                document.getElementById(id).classList.remove("is-warning");
+                $('#contact_danger').hide();
+                $('#contact_danger_empty').hide();
+                return true;
+            }
+        }
+
+        function email_validation(id) {
+            var input = document.getElementById(id).value;
+            var pattern = /\S+@\S+/;
+            if (input.match(pattern) == null && input != "") {
+                document.getElementById(id).classList.add("is-warning");
+                $('#email_danger').show();
+                $('#email_danger_empty').hide();
+                return false;
+            } else if (input == "") {
+                document.getElementById(id).classList.add("is-warning");
+                $('#email_danger_empty').show();
+                $('#email_danger').hide();
+                return false;
+            } else {
+                document.getElementById(id).classList.remove("is-warning");
+                $('#email_danger').hide();
+                $('#email_danger_empty').hide();
+                return true;
+            }
+        }
+
+        function purpose_validation(id) {
+            var input = document.getElementById(id).value;
+            if (input == "") {
+                document.getElementById(id).classList.add("is-warning");
+                $('#purpose_danger_empty').show();
+                return false;
+            } else {
+                document.getElementById(id).classList.remove("is-warning");
+                $('#purpose_danger_empty').hide();
+                return true;
+            }
+        }
+    </script>
+
+    <% include ../partials/footer %>

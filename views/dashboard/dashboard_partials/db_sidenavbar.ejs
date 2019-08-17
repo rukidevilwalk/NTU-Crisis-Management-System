@@ -1,0 +1,1092 @@
+<!-- Author(s): Neo Kee Pin -->
+<div id="sidenav" class="column is-one-fifth sidenav">
+    <aside class="menu">
+        <img src="/images/test_logo.png">
+        <p class="menu-label" id="loggedInUser" name="<%= user.username %>" email="<%= user.email %>" contact="<%= user.contact_number %>"
+            role="<%= user.role %>">
+            Logged in as:
+            <%= user.username %>
+        </p>
+        <p class="menu-label">Information</p>
+        <ul class="menu-list">
+            <li><a onclick="refs.modal_crisis.open()" id="updateCrisisLevel">Update Crisis Level</a></li>
+            <div class="modal" id="modal_crisis">
+                <div class="modal-background" onclick="refs.modal_crisis.close()"></div>
+                <div class="modal_custom modal-content">
+                    <header class="modal-card-head">
+                        <p class="modal-card-title">Incidents</p>
+                        <button class="delete" onclick="refs.modal_crisis.close()" aria-label="close"></button>
+                    </header>
+                    <section class="modal-card-body" id="crisis_info">
+                        <table class="table is-fullwidth is-hoverable">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <p>Incident ID</p>
+                                    </th>
+                                    <th>
+                                        <p>Incident Name</p>
+                                    </th>
+                                    <th>
+                                        <p>Incident Description</p>
+                                    </th>
+                                    <th>
+                                        <p>Incident Location</p>
+                                    </th>
+                                    <th>
+                                        <p>Start Date</p>
+                                    </th>
+                                    <th>
+                                        <p>Actions Taken</p>
+                                    </th>
+                                    <th>
+                                        <p>Reporter Name</p>
+                                    </th>
+                                    <th>
+                                        <p>Reporter Contact</p>
+                                    </th>
+                                    <th>
+                                        <p>Crisis Level Selection</p>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="updateTable">
+                                <!-- Content of to be updated table here -->
+                            </tbody>
+                        </table>
+                        <div class="columns">
+                            <div class="modal_crisis_custom_col"></div>
+                            <div class="column is-four-fifths"></div>
+                            <button class="button button_custom is-info" id="update_crisis" onclick="update_crisis()">Update</button>
+                        </div>
+                    </section>
+                </div>
+            </div>
+            <li><a onclick="refs.modal_ongoing.open()" id="ongoing">Ongoing</a></li>
+            <div class="modal" id="modal_ongoing">
+                <div class="modal-background" onclick="refs.modal_ongoing.close()"></div>
+                <div class="modal_custom modal-content">
+                    <header class="modal-card-head">
+                        <p class="modal-card-title">Ongoing Incidents</p>
+                        <button class="delete" onclick="refs.modal_ongoing.close()" aria-label="close"></button>
+                    </header>
+                    <section class="modal-card-body" id="ongoing_info">
+                        <!-- <div class="columns">
+                            <div class="column is-two-fifths"></div>
+                            <div class="column is-one-fifth">
+                                <div class="field is-horizontal">
+                                    <div class="field-label is-normal">
+                                        <label class="label">From</label>
+                                    </div>
+                                    <div class="field-body">
+                                        <div class="field">
+                                            <input type="text" class="input" id="from_date_ongoing">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column is-one-fifth">
+                                <div class="field is-horizontal">
+                                    <div class="field-label is-normal">
+                                        <label class="label">To</label>
+                                    </div>
+                                    <div class="field-body">
+                                        <div class="field">
+                                            <input type="text" class="input" id="to_date_ongoing">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column is-one-fifth">
+                                <div class="select align_right">
+                                    <select id="crisis_dropdown_ongoing">
+                                        <option id="allCrisis">Show All Crisis Level</option>
+                                        <option id="l1Crisis">Show Level 1</option>
+                                        <option id="l2Crisis">Show Level 2</option>
+                                        <option id="l3Crisis">Show Level 3</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div> -->
+                        <table class="table is-fullwidth is-hoverable">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <p>Incident ID</p>
+                                    </th>
+                                    <th>
+                                        <p>Incident Name</p>
+                                    </th>
+                                    <th>
+                                        <p>Incident Description</p>
+                                    </th>
+                                    <th>
+                                        <p>Incident Location</p>
+                                    </th>
+                                    <th>
+                                        <p>Start Date</p>
+                                    </th>
+                                    <th>
+                                        <p>Crisis Level</p>
+                                    </th>
+                                    <th>
+                                        <p>Reporter Name</p>
+                                    </th>
+                                    <th>
+                                        <p>Reporter Contact</p>
+                                    </th>
+                                    <th>
+                                        <p>Actions Taken</p>
+                                    </th>
+                                    <th>
+                                        <p>Resolve</p>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="ongoingTable">
+                                <!-- Content of ongoing table here -->
+                            </tbody>
+                        </table>
+                        <div class="columns">
+                            <div class="modal_crisis_custom_col"></div>
+                            <div class="column is-four-fifths"></div>
+                            <button class="button is-info is-right" onClick="resolveIncidents()">Resolve</button>
+                        </div>
+                    </section>
+                </div>
+            </div>
+            <li><a onclick="refs.modal_resolved.open()" id="resolved">Resolved</a></li>
+            <div class="modal" id="modal_resolved">
+                <div class="modal-background" onclick="refs.modal_resolved.close()"></div>
+                <div class="modal_custom modal-content">
+                    <header class="modal-card-head">
+                        <p class="modal-card-title">Resolved Incidents</p>
+                        <button class="delete" onclick="refs.modal_resolved.close()" aria-label="close"></button>
+                    </header>
+                    <section class="modal-card-body" id="resolved_info">
+                        <!-- <div class="columns">
+                            <div class="column is-two-fifths"></div>
+                            <div class="column is-one-fifth">
+                                <div class="field is-horizontal">
+                                    <div class="field-label is-normal">
+                                        <label class="label">From</label>
+                                    </div>
+                                    <div class="field-body">
+                                        <div class="field">
+                                            <input type="text" class="input" id="from_date_resolved">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column is-one-fifth">
+                                <div class="field is-horizontal">
+                                    <div class="field-label is-normal">
+                                        <label class="label">To</label>
+                                    </div>
+                                    <div class="field-body">
+                                        <div class="field">
+                                            <input type="text" class="input" id="to_date_resolved">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column is-one-fifth">
+                                <div class="select align_right">
+                                    <select id="crisis_dropdown_resolved">
+                                        <option id="allCrisis">Show All Crisis Level</option>
+                                        <option id="l1Crisis">Show Level 1</option>
+                                        <option id="l2Crisis">Show Level 2</option>
+                                        <option id="l3Crisis">Show Level 3</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div> -->
+                        <table class="table is-fullwidth is-hoverable">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <p>Incident ID</p>
+                                    </th>
+                                    <th>
+                                        <p>Incident Name</p>
+                                    </th>
+                                    <th>
+                                        <p>Incident Description</p>
+                                    </th>
+                                    <th>
+                                        <p>Incident Location</p>
+                                    </th>
+                                    <th>
+                                        <p>Start Date</p>
+                                    </th>
+                                    <th>
+                                        <p>Resolved Date</p>
+                                    </th>
+                                    <th>
+                                        <p>Crisis Level</p>
+                                    </th>
+                                    <th>
+                                        <p>Reporter Name</p>
+                                    </th>
+                                    <th>
+                                        <p>Reporter Contact</p>
+                                    </th>
+                                    <th>
+                                        <p>Actions Taken</p>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="resolvedTable">
+                                <!-- Content of resolved table here -->
+                            </tbody>
+                        </table>
+                    </section>
+                </div>
+            </div>
+        </ul>
+        <p class="menu-label">Incident</p>
+        <ul class="menu-list">
+            <li><a id="toggleIncidents" onclick="show_incident_map()">Incidents</a></li>
+            <ul>
+                <li><a id="toggleHeatMap" onclick="show_heat_map()" class="hide_element">-&nbsp;Heatmap</a></li>
+            </ul>
+            <li><a id="toggleDengueClusters" onclick="show_dengue_map()">Dengue Clusters</a></li>
+            <li><a id="togglePSI" onclick="show_psi_map()">PSI</a></li>
+            <li><a id="toggleWeather" onclick="show_weather_map()">Weather</a></li>
+        </ul>
+        <p class="menu-label" id="report_label">Report</p>
+        <ul class="menu-list" id="report_button">
+            <li><a id="generate_report" onclick="generate_report()">Generate Report</a></li>
+        </ul>
+        <p class="menu-label" id="log_label">Log Incident</p>
+        <ul class="menu-list" id="log_button">
+            <li><a onclick="refs.loginForm.open()">Input form</a></li>
+        </ul>
+    </aside>
+</div>
+<div class="modal" id="modal_broadcast">
+    <div class="modal-background" onclick="refs.modal_broadcast.close()"></div>
+    <div class="modal_broadcast_custom modal-content">
+        <section class="modal-card-body" id="broadcast_info">
+            <div class="columns">
+                <div class="column is-one-third">
+                    <img src="/images/facebook.png" onclick="show_facebook_input()">
+                </div>
+                <div class="column is-one-third">
+                    <img src="/images/twitter.png" onclick="show_twitter_input()">
+                </div>
+                <div class="column is-one-third">
+                    <img src="/images/boardcast.png" onclick="show_sms_input()">
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<div class="modal" id="modal_twitter">
+    <div class="modal-background" onclick="refs.modal_twitter.close()"></div>
+    <div class="modal-content">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Tweet</p>
+            <button class="delete" onclick="refs.modal_twitter.close()" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body" id="twitter_info">
+            <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                    <label class="label">Message</label>
+                </div>
+                <div class="field-body">
+                    <div class="field">
+                        <textarea type="text" class="textarea" id="twitter_message" placeholder="Your Message"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="modal_custom_col"></div>
+                <div class="column is-three-quarters">
+                    <p class="help float_right">Word remaining:&nbsp;<span class="help float_right twitter_span" id="remaining_count">140</span></p>
+                </div>
+                <button class="button button_custom" id="clear_twitter" onclick="clear_twitter()">Clear</button>
+                <p>&nbsp;</p>
+                <button class="button button_custom" id="submit_twitter" onclick="post_twit()">Post</button>
+            </div>
+        </section>
+    </div>
+</div>
+<div class="modal" id="modal_facebook">
+    <div class="modal-background" onclick="refs.modal_facebook.close()"></div>
+    <div class="modal-content">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Post</p>
+            <button class="delete" onclick="refs.modal_facebook.close()" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body" id="facebook_info">
+            <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                    <label class="label">Message</label>
+                </div>
+                <div class="field-body">
+                    <div class="field">
+                        <textarea type="text" class="textarea" id="facebook_message" placeholder="Your Message"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column is-three-quarters"></div>
+                <div class="modal_custom_col"></div>
+                <button class="button button_custom" id="clear_twitter" onclick="clear_facebook()">Clear</button>
+                <p>&nbsp;</p>
+                <button class="button button_custom is-info" id="submit_facebook" onclick="post_facebook()">Post</button>
+            </div>
+        </section>
+    </div>
+</div>
+<div class="modal" id="modal_email">
+    <div class="modal-background" onclick="refs.modal_email.close()"></div>
+    <div class="modal-content">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Èmail</p>
+            <button class="delete" onclick="refs.modal_email.close()" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body" id="facebook_info">
+            <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                    <label class="label">Email</label>
+                </div>
+                <div class="field-body">
+                    <div class="field">
+                        <div class="control">
+                            <input type="text" class="input" id="email_address" placeholder="Email Address">
+                        </div>
+                        <p class="help is-danger hide_element" id="email_address_danger_empty">This cannot be empty!</p>
+                    </div>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column is-three-quarters"></div>
+                <div class="modal_email_custom_col"></div>
+                <button class="button button_custom" id="clear_email" onclick="clear_email()">Clear</button>
+                <p>&nbsp;</p>
+                <button class="button button_custom is-info" id="send_report" onclick="send_report()">Send</button>
+            </div>
+        </section>
+    </div>
+</div>
+<div class="modal" id="modal_sms">
+    <div class="modal-background" onclick="refs.modal_sms.close()"></div>
+    <div class="modal-content">
+        <header class="modal-card-head">
+            <p class="modal-card-title">SMS</p>
+            <button class="delete" onclick="refs.modal_sms.close()" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body" id="email_info">
+            <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                    <label class="label">Send To</label>
+                </div>
+                <div class="field-body">
+                    <div class="field">
+                        <div class="control">
+                            <input type="text" class="input" placeholder="Contact Number" id="sms_contact">
+                        </div>
+                        <p class="help is-danger hide_element" id="sms_sender_danger_empty">This cannot be empty!</p>
+                    </div>
+                    <div id="select" class="select">
+                        <!-- Insert dynamic resource dropdown here -->
+                    </div>
+                </div>
+            </div>
+            <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                    <label class="label">Message</label>
+                </div>
+                <div class="field-body">
+                    <div class="field">
+                        <div class="control">
+                            <textarea type="text" class="textarea" id="sms_message" placeholder="Your Message"></textarea>
+                        </div>
+                        <p class="help is-danger hide_element" id="sms_content_danger_empty">This cannot be empty!</p>
+                    </div>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column is-three-quarters"></div>
+                <div class="modal_email_custom_col"></div>
+                <button class="button button_custom" id="clear_sms" onclick="clear_sms()">Clear</button>
+                <p>&nbsp;</p>
+                <button class="button button_custom" id="send_sms" value="" onclick="send_sms(this)">Send</button>
+            </div>
+        </section>
+    </div>
+</div>
+<div class="modal" id="loginForm">
+    <div class="modal-background" onclick="refs.loginForm.close()"></div>
+    <div class="modal-content">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Input form</p>
+            <button class="delete" onclick="refs.loginForm.close()" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body" id="logform">
+            <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                    <label class="label">Name</label>
+                </div>
+                <div class="field-body">
+                    <div class="field modal_style">
+                        <div class="control">
+                            <input type="text" class="input" placeholder="Input Name" id="form_name">
+                        </div>
+                        <p class="help is-danger hide_element" id="name_danger">Input name is
+                            invalid.
+                            Can only take in alphabet
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                    <label class="label">Email</label>
+                </div>
+                <div class="field-body">
+                    <div class="field modal_style">
+                        <div class="control">
+                            <input type="text" class="input" placeholder="Input Name" id="form_email">
+                        </div>
+                        <p class="help is-danger hide_element" id="email_danger">Input email is
+                            invalid.
+                            Please enter a legit Email
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                    <label class="label">Contact No.</label>
+                </div>
+                <div class="field-body">
+                    <div class="field modal_style">
+                        <div class="control">
+                            <input type="text" class="input" placeholder="Contact Number" id="form_contact">
+                        </div>
+                        <p class="help is-danger hide_element" id="contact_danger">Input contact is
+                            invalid.
+                            Only accept numbers
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                    <label class="label">Location</label>
+                </div>
+                <div class="field-body">
+                    <div class="field modal_style">
+                        <div class="control">
+                            <input type="text" class="input" placeholder="Input Location" id="form_location">
+                        </div>
+                        <p class="help is-danger hide_element" id="location_danger">Please provide
+                            the location of the incident</p>
+                    </div>
+                </div>
+            </div>
+            <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                    <label class="label">Crisis</label>
+                </div>
+                <div class="field-body">
+                    <div class="field is-narrow">
+                        <div class="control">
+                            <div class="select is-fullwidth">
+                                <select id="form_input_crisis" onchange="checkForOthers(this.value)">
+                                    <option value="start">Please choose one of the following</option>
+                                    <option value="Dengue">Dengue</option>
+                                    <option value="PSI">PSI</option>
+                                    <option value="weather">Haze</option>
+                                    <option value="others">Others</option>
+                                </select>
+                            </div>
+                        </div>
+                        <p class="help is-danger hide_element" id="crisis_danger">Mandatory to
+                            choose
+                            one.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                    <label class="label hide_element" id="otherCrisisTitle">Others</label>
+                </div>
+                <div class="field-body">
+                    <div class="field modal_style">
+                        <div class="control">
+                            <input type="text" id="form_others" class="input hide_element" placeholder="Input Crisis">
+                        </div>
+                        <p class="help is-danger hide_element" id="others_danger">Please provide
+                            information regarding the crisis</p>
+                    </div>
+                </div>
+            </div>
+            <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                    <label class="label">Description</label>
+                </div>
+                <div class="field-body">
+                    <div class="field modal_style">
+                        <div class="control">
+                            <textarea type="text" class="textarea des_stype" id="form_description"></textarea>
+                        </div>
+                        <p class="help is-danger hide_element" id="description_danger">Please fill
+                            up this part</p>
+                    </div>
+                </div>
+            </div>
+            <p>&nbsp;</p>
+            <div class="columns">
+                <div class="column is-three-quarters"></div>
+                <div class="modal_email_custom_col"></div>
+                <button class="button" id="cancelButton" onclick="clearInputForm()">Clear</button>
+                <p>&nbsp;</p>
+                <button class="button is-info" id="uploadButton" onclick="upload_db()">Send</button>
+            </div>
+            <div class="columns">
+        </section>
+    </div>
+</div>
+<div class="modal" id="modal_success_send_email">
+    <div class="modal-background" onclick="refs.modal_success_send_email.close()"></div>
+    <div class="modal-content">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Success</p>
+            <button class="delete" onclick="refs.modal_success_send_email.close()" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body" id="success_email">
+            <div class="field is-horizontal">
+                <div class="field is-normal alert_crisis">
+                    <label id="success_email_message" class="label">Successfully send the Email!</label>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<div class="modal" id="modal_alert">
+    <div class="modal-background" onclick="refs.modal_alert.close()"></div>
+    <div class="modal-content">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Alert</p>
+            <button class="delete" onclick="refs.modal_alert.close()" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body" id="Alert_info">
+            <div class="field is-horizontal">
+                <div class="field is-normal alert_crisis">
+                    <label id="alertLabel" class="label"></label>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column is-four-fifths"></div>
+                <button class="button button_custom" id="select_crisis_level" onclick="choose_crisis_level()">Choose
+                    now</button>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script>
+    var refs = {
+        modal_ongoing: {
+            open: function () {
+                document.getElementById('modal_ongoing').classList.add('is-active');
+            },
+            close: function () {
+                document.getElementById('modal_ongoing').classList.remove('is-active');
+            }
+        },
+        modal_resolved: {
+            open: function () {
+                document.getElementById('modal_resolved').classList.add('is-active');
+            },
+            close: function () {
+                document.getElementById('modal_resolved').classList.remove('is-active');
+            }
+        },
+        modal_twitter: {
+            open: function () {
+                document.getElementById('modal_twitter').classList.add('is-active');
+            },
+            close: function () {
+                document.getElementById('modal_twitter').classList.remove('is-active');
+                clear_twitter();
+            }
+        },
+        modal_facebook: {
+            open: function () {
+                document.getElementById('modal_facebook').classList.add('is-active');
+            },
+            close: function () {
+                document.getElementById('modal_facebook').classList.remove('is-active');
+                clear_facebook();
+            }
+        },
+        modal_sms: {
+            open: function () {
+                document.getElementById('modal_sms').classList.add('is-active');
+            },
+            close: function () {
+                document.getElementById('modal_sms').classList.remove('is-active');
+                clear_sms();
+            }
+        },
+        modal_alert: {
+            open: function () {
+                document.getElementById('modal_alert').classList.add('is-active');
+            },
+            close: function () {
+                document.getElementById('modal_alert').classList.remove('is-active');
+
+            }
+        },
+        modal_crisis: {
+            open: function () {
+                document.getElementById('modal_crisis').classList.add('is-active');
+            },
+            close: function () {
+                document.getElementById('modal_crisis').classList.remove('is-active');
+            }
+        },
+        modal_broadcast: {
+            open: function () {
+                document.getElementById('modal_broadcast').classList.add('is-active');
+            },
+            close: function () {
+                document.getElementById('modal_broadcast').classList.remove('is-active');
+            }
+        },
+        loginForm: {
+            open: function () {
+                document.getElementById('loginForm').classList.add('is-active');
+            },
+            close: function () {
+                document.getElementById('loginForm').classList.remove('is-active');
+                clearInputForm();
+            }
+        },
+        modal_email: {
+            open: function () {
+                document.getElementById('modal_email').classList.add('is-active');
+            },
+            close: function () {
+                document.getElementById('modal_email').classList.remove('is-active');
+                clear_email();
+            }
+        },
+        modal_success_send_email: {
+            open: function () {
+                document.getElementById('modal_success_send_email').classList.add('is-active');
+            },
+            close: function () {
+                document.getElementById('modal_success_send_email').classList.remove('is-active');
+            }
+        }
+    }
+
+    $(function () {
+        $('#from_date_ongoing').datepicker();
+    });
+
+    $(function () {
+        $('#to_date_ongoing').datepicker();
+    });
+
+    $(function () {
+        $('#to_date_resolved').datepicker();
+    });
+
+    $(function () {
+        $('#from_date_resolved').datepicker();
+    });
+
+    $('document').ready(function () {
+
+        if (document.getElementById('loggedInUser').getAttribute("role") == "minister") {
+            $('#log_label').hide();
+            $('#log_button').hide();
+        } else if (document.getElementById('loggedInUser').getAttribute("role") == "staff") {
+            $('#report_label').hide();
+            $('#report_button').hide();
+        }
+    })
+
+    var twitter_text = document.getElementById('twitter_message');
+    var result = document.getElementById('remaining_count');
+    twitter_text.addEventListener("input", function () {
+        var count = this.value.replace(/\s+/g, '').length;
+        document.getElementById('remaining_count').innerHTML = (140 - count);
+    }, false);
+
+    function display_broadcast(selectedIncident) {
+        incident_id = $(selectedIncident).find('.incident_id').text()
+        incident_name = $(selectedIncident).find('.incident_name').text()
+        incident_description = $(selectedIncident).find('.incident_description').text()
+        incident_date = $(selectedIncident).find('.incident_date_created').text()
+        incident_location = $(selectedIncident).find('.incident_location').text()
+
+        prefilledMessage = "Incident: " + incident_name + ", Date: " + incident_date + ", Description: " +
+            incident_description + ", Location: " +
+            incident_location;
+        document.getElementById('send_sms').value = incident_id
+        document.getElementById('twitter_message').value = prefilledMessage
+        document.getElementById('facebook_message').value = prefilledMessage
+        document.getElementById('sms_message').value = prefilledMessage
+
+        $(selectedIncident).children().not(".ongoing_select").click(function () {
+            refs.modal_broadcast.open();
+        });
+    }
+
+    function clear_email() {
+        document.getElementById("email_address").value = "";
+    }
+
+    function generate_report() {
+        refs.modal_email.open();
+    }
+
+    function send_report() {
+        var input = document.getElementById("email_address").value;
+
+        if (input == "") {
+            $('#email_address_danger_empty').show();
+            document.getElementById("email_address").classList.add("is-warning");
+        }
+        else {
+            $('#email_address_danger_empty').hide();
+            document.getElementById("email_address").classList.remove("is-warning");
+            refs.modal_success_send_email.open();
+            refs.modal_email.close();
+            generateReport(input)
+        }
+    }
+
+    function clear_twitter() {
+        document.getElementById('twitter_message').value = ""
+        document.getElementById('remaining_count').innerHTML = 140;
+    }
+
+    function clear_facebook() {
+        document.getElementById('facebook_message').value = ""
+    }
+
+    function clear_sms() {
+        document.getElementById('sms_message').value = ""
+        document.getElementById('sms_contact').value = ""
+        $('#sms_sender_danger_empty').hide();
+        $('#sms_content_danger_empty').hide();
+        document.getElementById("sms_contact").classList.remove("is-warning");
+        document.getElementById("sms_message").classList.remove("is-warning");
+
+    }
+
+    function show_twitter_input() {
+        refs.modal_twitter.open()
+        refs.modal_broadcast.close()
+    }
+
+    function show_facebook_input() {
+        refs.modal_facebook.open() 
+        refs.modal_broadcast.close()
+    }
+
+    function show_sms_input() {
+        refs.modal_sms.open()
+        refs.modal_broadcast.close()
+    }
+
+    function choose_crisis_level() {
+        refs.modal_alert.close()
+        refs.modal_crisis.open()
+    }
+
+    function send_sms(incident) {
+        var flag = []
+        flag.push(sms_sender_validation("sms_contact") ? true : false)
+        flag.push(sms_content_validation("sms_message") ? true : false)
+
+        if (flag.every(checking_true)) {
+            sms_info = document.getElementById('sms_message').value
+            sms_contact = document.getElementById('sms_contact').value
+            resources_selected = {
+                incident_id: incident.value,
+                actions_taken: sms_contact
+
+            }
+            sendSmsInfo(sms_info, resources_selected)
+            refs.modal_sms.close()
+            refs.modal_broadcast.close()
+        }
+    }
+
+    function post_facebook() {
+        fb_post = document.getElementById('facebook_message').value;
+        sendFbInfo(fb_post)
+        refs.modal_facebook.close()
+        refs.modal_broadcast.close()
+    }
+
+    function post_twit() {
+        tweet = document.getElementById('twitter_message').value;
+        sendTwitterInfo(tweet)
+        refs.modal_twitter.close()
+        refs.modal_broadcast.close()
+    }
+
+    function update_crisis() {
+
+        updatedTable = document.getElementById("updateTable")
+        updateList = []
+
+        //Check all the rows if any crisis level is selected
+        for (i = 0; i < updatedTable.rows.length; i++) {
+            row = updatedTable.rows[i]
+            select = row.cells[8].childNodes[0].childNodes[0]
+            // Save all id and crisis level of incidents with crisis level selected
+            if (select.selectedIndex !== 0) {
+                updateList.push([row.cells[0].textContent, select.selectedIndex])
+            }
+
+        }
+
+        updateCrisisLevel(updateList)
+    }
+
+    function resolveIncidents() {
+        updateList = []
+
+        $(".ongoing_select input:checked").each(function () {
+
+            //to test if the row checked is correct index
+            //row_index = $("#ongoingTable tr").index((this).closest("tr"))
+            incident_id = $(this).parent().siblings('.incident_id').text();
+            updateList.push(incident_id)
+
+        })
+
+        updateIncidentStatus(updateList)
+    }
+
+    function checkForOthers(value) {
+        var choice = document.getElementById('form_input_crisis').value;
+        if (choice == 'others') {
+            $('#otherCrisisTitle').show();
+            $('#form_others').show();
+        } else {
+            $('#otherCrisisTitle').hide();
+            $('#form_others').hide();
+        }
+    }
+
+    function clearInputForm() {
+        document.getElementById('form_name').value = "";
+        document.getElementById('form_email').value = "";
+        document.getElementById('form_contact').value = "";
+        document.getElementById('form_location').value = "";
+        document.getElementById('form_others').value = "";
+        document.getElementById('form_description').value = "";
+        document.getElementById('form_input_crisis').value = "start";
+
+        document.getElementById('form_name').classList.remove("is-warning");
+        document.getElementById('form_email').classList.remove("is-warning");
+        document.getElementById('form_contact').classList.remove("is-warning");
+        document.getElementById('form_location').classList.remove("is-warning");
+        document.getElementById('form_others').classList.remove("is-warning");
+        document.getElementById('form_description').classList.remove("is-warning");
+        document.getElementById('form_input_crisis').classList.remove("is-warning");
+
+        $('#name_danger').hide();
+        $('#contact_danger').hide();
+        $('#email_danger').hide();
+        $('#location_danger').hide();
+        $('#others.danger').hide();
+        $('#description_danger').hide();
+        $('#crisis_danger').hide();
+    }
+
+    function upload_db() {
+        // only if return true, will the minimum required field be updated
+        // then can we send the information to db
+        if (validate_data()) {
+
+            //Check if crisis name is "others"
+            if (document.getElementById('form_input_crisis').value == "others") {
+                crisis = document.getElementById('form_others').value
+            } else {
+                crisis = document.getElementById('form_input_crisis').value
+            }
+
+            // Use current staff's details if incident is self entered
+            if (document.getElementById('form_name').value == "") {
+                name = document.getElementById('loggedInUser').getAttribute("name")
+                email = document.getElementById('loggedInUser').getAttribute("email")
+                contact = document.getElementById('loggedInUser').getAttribute("contact")
+            } else {
+                name = document.getElementById('form_name').value
+                email = document.getElementById('form_email').value
+                contact = document.getElementById('form_contact').value
+            }
+
+            incidentData = {
+                name: name,
+                email: email,
+                contact: contact,
+                location: document.getElementById('form_location').value,
+                description: document.getElementById('form_description').value,
+                crisis: crisis
+            }
+
+            uploadIncident(incidentData);
+            refs.loginForm.close();
+            return;
+        }
+    }
+
+    function checking_true(arr) {
+        return arr == true;
+    }
+
+    function sms_content_validation(id) {
+        var input = document.getElementById(id).value;
+        if (input == "") {
+            $('#sms_content_danger_empty').show();
+            document.getElementById(id).classList.add("is-warning")
+            return false
+        } else {
+            $('#sms_content_danger_empty').hide();
+            document.getElementById(id).classList.remove("is-warning")
+            return true
+        }
+    }
+
+    function sms_sender_validation(id) {
+        var input = document.getElementById(id).value;
+        if (input == "") {
+            $('#sms_sender_danger_empty').show();
+            document.getElementById(id).classList.add("is-warning")
+            return false
+        } else {
+            $('#sms_sender_danger_empty').hide();
+            document.getElementById(id).classList.remove("is-warning")
+            return true
+        }
+    }
+
+    function validate_data() {
+        var flag = [];
+        flag.push(name_validation("form_name") ? true : false);
+        flag.push(email_validation("form_email") ? true : false);
+        flag.push(contact_validation("form_contact") ? true : false);
+        flag.push(location_validation("form_location") ? true : false);
+        flag.push(description_validation("form_description") ? true : false);
+        flag.push(crisis_input_validation("form_input_crisis") ? true : false);
+        if (document.getElementById("form_input_crisis").value == "others") {
+            flag.push(others_validation("form_others") ? true : false);
+        }
+
+        if (!flag.every(checking_true)) {
+            return false;
+        }
+        return true;
+    }
+
+    function name_validation(id) {
+        var input = document.getElementById(id).value;
+        var pattern = /^[a-zA-Z-,]+(\s{0,1}[a-zA-Z-, ])*$/;
+        if (input.match(pattern) == null && input != "") {
+            document.getElementById(id).classList.add("is-warning");
+            $('#name_danger').show();
+            return false;
+        } else {
+            document.getElementById(id).classList.remove("is-warning");
+            $('#name_danger').hide();
+            return true;
+        }
+    }
+
+    function contact_validation(id) {
+        var input = document.getElementById(id).value;
+        var pattern = /^([A-Z0-9]+)$/;
+        if (input.match(pattern) == null && input != "") {
+            document.getElementById(id).classList.add("is-warning");
+            $('#contact_danger').show();
+            return false;
+        } else {
+            document.getElementById(id).classList.remove("is-warning");
+            $('#contact_danger').hide();
+            return true;
+        }
+    }
+
+    function email_validation(id) {
+        var input = document.getElementById(id).value;
+        var pattern = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/;
+        if (input.match(pattern) == null && input != "") {
+            document.getElementById(id).classList.add("is-warning");
+            $('#email_danger').show();
+            return false;
+        } else {
+            document.getElementById(id).classList.remove("is-warning");
+            $('#email_danger').hide();
+            return true;
+        }
+    }
+
+    function description_validation(id) {
+        var input = document.getElementById(id).value;
+        if (input == "") {
+            document.getElementById(id).classList.add("is-warning");
+            $('#description_danger').show();
+            return false;
+        } else {
+            document.getElementById(id).classList.remove("is-warning");
+            $('#description_danger').hide();
+            return true;
+        }
+    }
+
+    function location_validation(id) {
+        var input = document.getElementById(id).value;
+        if (input == "") {
+            document.getElementById(id).classList.add("is-warning");
+            $('#location_danger').show();
+            return false;
+        } else {
+            document.getElementById(id).classList.remove("is-warning");
+            $('#location_danger').hide();
+            return true;
+        }
+    }
+
+    function others_validation(id) {
+        //    if (document.getElementById(crisis_input_id).value == "others") {
+        var input = document.getElementById(id).value;
+        if (input == "") {
+            document.getElementById(id).classList.add("is-warning");
+            $('#others_danger').show();
+            return false;
+        } else {
+            document.getElementById(id).classList.remove("is-warning");
+            $('#others_danger').hide();
+            return true;
+        }
+        //    }
+    }
+
+    function crisis_input_validation(id) {
+        var input = document.getElementById(id).value;
+        if (input == "start") {
+            document.getElementById(id).classList.add("is-warning");
+            $('#crisis_danger').show();
+            return false;
+        } else {
+            document.getElementById(id).classList.remove("is-warning");
+            $('#crisis_danger').hide();
+            return true;
+        }
+    }
+</script>

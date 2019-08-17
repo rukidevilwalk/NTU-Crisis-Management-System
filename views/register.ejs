@@ -1,0 +1,221 @@
+<!-- Author(s): Neo Kee Pin -->
+<% include partials/header %>
+    <!--suppress Annotator, Annotator -->
+<style>
+    .text_alignment {
+        padding-top: 5px;
+        text-align: center;
+        font-size: 18px;
+    }
+
+    .header_text {
+        padding-top: 15px;
+        font-size: 40px;
+        text-align: center;
+    }
+
+    .button_shift {
+        margin-top: 10px;
+    }
+
+    .role_adjustment {
+        margin-top: .5em;
+    }
+
+    .hide_element {
+        display: none;
+    }
+    </style>
+</head>
+<body>
+    <div class="columns is-desktop">
+        <div class="column is-one-third"></div>
+        <div class="column is-one-third">
+            <div class="field">
+                <form action="/register" method="post" onsubmit="return validate_data()">
+                    <h1 class="header_text">Sign up</h1>
+                    <label class="label text_alignment">Username</label>
+                    <div class="control">
+                        <input type="text" name="username" class="input is-rounded is-hovered" type="text" placeholder="Username input" id="username">
+                    </div>
+                    <div class="help is-danger hide_element" id="name_danger">
+                        Invalid input. Please try again.
+                    </div>
+                    <div class="help is-danger hide_element" id="name_danger_empty">
+                        Invalid input. Cannot be empty.
+                    </div>
+                    <label class="label text_alignment">Password</label>
+                    <div class="control">
+                        <input type="password" name="password" class="input is-rounded is-hovered" type="text" placeholder="Password input" id="password">
+                    </div>
+                    <div class="help is-danger hide_element" id="password_danger_empty">
+                        Invalid input. Cannot be empty
+                    </div>
+                    <label class="label text_alignment">Contact Number</label>
+                    <div class="control">
+                        <input type="text" name="contact" class="input is-rounded is-hovered" type="text" placeholder="Contact Number input" id="contact">
+                    </div>
+                    <div class="help is-danger hide_element" id="contact_danger">
+                        Invalid input. Can only accept numbers.
+                    </div>
+                    <div class="help is-danger hide_element" id="contact_danger_empty">
+                        Invalid input. Cannot be empty
+                    </div>
+                    <label class="label text_alignment">Email</label>
+                    <div class="control">
+                        <input type="text" name="email" class="input is-rounded is-hovered" type="text" placeholder="Email input" id="email">
+                    </div>
+                    <div class="help is-danger hide_element" id="email_danger">
+                        Invalid Input. Please provide a legit Email
+                    </div>
+                    <div class="help is-danger hide_element" id="email_danger_empty">
+                        Invalid Input. Cannot be empty
+                    </div>
+                    <label class="label text_alignment">Role</label>
+                    <div class="role_adjustment columns"> 
+                        <div class="column is-two-fifths"></div>
+                        <div class="control">
+                            <div class="select" name="role">
+                                <select id="crisis_dropdown" name="role">
+                                    <option name="role" value="staff">Staff</option>
+                                    <option name="role" value="minister">Minister</option>
+                                    <option name="role" value="admin">Admin</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="columns">
+                        <div class="column is-two-fifths"></div>
+                        <div class="column is-one-fifth button_shift">
+                            <button type="submit" class="button is-link is-rounded is-hovered">Register</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="modal_success">
+        <div class="modal-background" onclick="refs.modal_success.close()"></div>
+        <div class="modal-content">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Success</p>
+                <button class="delete" onclick="refs.modal_success.close()" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body" id="success_email">
+                <div class="field is-horizontal">
+                    <div class="field is-normal alert_crisis">
+                        <label id="success_email_message" class="label">Successfully register user!</label>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        var refs = {
+            modal_success: {
+                open: function () {
+                    document.getElementById('modal_success').classList.add('is-active');
+                },
+                close: function () {
+                    document.getElementById('modal_success').classList.remove('is-active');
+                }
+            }
+        }
+        function validate_data() {
+            var flag = [];
+            flag.push(name_validation("username") ? true : false);
+            flag.push(email_validation("email") ? true : false);
+            flag.push(contact_validation("contact") ? true : false);
+            flag.push(password_validation("password") ? true : false);
+
+            if (!flag.every(checking_true)) {
+                console.log(flag);
+                return false;
+            }
+            refs.modal_success.open();
+            return true;
+        }
+
+        function checking_true(arr) {
+            return arr == true;
+        }
+
+        function password_validation(id) {
+            var input = document.getElementById(id).value;
+            if (input == "") {
+                document.getElementById(id).classList.add("is-warning");
+                $('#password_danger_empty').show();
+                return false;
+            }
+            else {
+                document.getElementById(id).classList.remove("is-warning");
+                $('#password_danger_empty').hide();
+                return true;
+            }
+        }
+
+        function name_validation(id) {
+            var input = document.getElementById(id).value;
+            var pattern = /^[a-zA-Z-,]+(\s{0,1}[a-zA-Z-, ])*$/;
+            if (input.match(pattern) == null && input != "") {
+                document.getElementById(id).classList.add("is-warning");
+                $('#name_danger').show();
+                $('#name_danger_empty').hide();
+                return false;
+            } else if (input == "") {
+                document.getElementById(id).classList.add("is-warning");
+                $('#name_danger_empty').show();
+                $('#name_danger').hide();
+                return false;
+            } else {
+                document.getElementById(id).classList.remove("is-warning");
+                $('#name_danger').hide();
+                $('#name_danger_empty').hide();
+                return true;
+            }
+        }
+
+        function contact_validation(id) {
+            var input = document.getElementById(id).value;
+            var pattern = /^([0-9]+)$/;
+            if (input.match(pattern) == null && input != "") {
+                document.getElementById(id).classList.add("is-warning");
+                $('#contact_danger').show();
+                $('#contact_danger_empty').hide();
+                return false;
+            } else if (input == "") {
+                document.getElementById(id).classList.add("is-warning");
+                $('#contact_danger_empty').show();
+                $('#contact_danger').hide();
+                return false;
+            } else {
+                document.getElementById(id).classList.remove("is-warning");
+                $('#contact_danger').hide();
+                $('#contact_danger_empty').hide();
+                return true;
+            }
+        }
+
+        function email_validation(id) {
+            var input = document.getElementById(id).value;
+            var pattern = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/;
+            if (input.match(pattern) == null && input != "") {
+                document.getElementById(id).classList.add("is-warning");
+                $('#email_danger').show();
+                $('#email_danger_empty').hide();
+                return false;
+            } else if (input == "") {
+                document.getElementById(id).classList.add("is-warning");
+                $('#email_danger_empty').show();
+                $('#email_danger').hide();
+                return false;
+            } else {
+                document.getElementById(id).classList.remove("is-warning");
+                $('#email_danger').hide();
+                $('#email_danger_empty').hide();
+                return true;
+            }
+        }   
+    </script>
+    <% include partials/footer %>

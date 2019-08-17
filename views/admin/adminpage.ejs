@@ -1,0 +1,43 @@
+<!-- Author(s): Neo Kee Pin -->
+<% include ../partials/header %>
+
+
+<style>
+    .text_alignment {
+        padding-top: 5px;
+        text-align: center;
+        font-size: 18px;
+    }
+
+    .header_text {
+        padding-top: 15px;
+        font-size: 40px;
+        text-align: center;
+    }
+
+    .button_shift {
+        margin-top: 10px;
+    }
+
+    .role_adjustment {
+        margin-top: .5em;
+    }
+</style>
+</head>
+<body>
+    <div class="columns is-desktop">
+        <div class="column is-one-third"></div>
+        <div class="column is-one-third">
+            <div class="field">
+                <h1 class="header_text">Please choose where to go</h1>
+                <p>&nbsp;</p>
+                <label class="label text_alignment" onclick="window.location.href='/dashboard'">Dashboard</label>
+                <label class="label text_alignment" onclick="window.location.href='/manage_user'">Manage Users</label>
+                <label class="label text_alignment" onclick="window.location.href='/manage_resource'">Manage Resources</label>
+                <label class="label text_alignment" onclick="window.location.href='/register'">Register</label> 
+                <label class="label text_alignment" onclick="window.location.href='/logout'">Logout</label>
+            </div>
+        </div> 
+    </div>
+
+<% include ../partials/footer %>

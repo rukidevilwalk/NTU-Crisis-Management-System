@@ -1,0 +1,121 @@
+<!-- Author(s): Neo Kee Pin -->
+<% include partials/header %>
+    <!--suppress Annotator, Annotator -->
+<style>
+    .text_alignment {
+        padding-top: 5px;
+        text-align: center;
+        font-size: 18px;
+    }
+
+    .header_text {
+        padding-top: 15px;
+        font-size: 40px;
+        text-align: center;
+    }
+
+    .button_shift {
+        margin-top: 10px;
+    }
+
+    .hide_element {
+        display: none;
+    }
+    </style>
+</head>
+<body>
+    <div class="columns is-desktop">
+   
+        <div class="column is-one-third"></div>
+        <div class="column is-one-third">
+            <div class="field">
+
+                    <form action="/login" method="post" onsubmit="return validate_data()">
+                <h1 class="header_text">Login</h1>
+                <label class="label text_alignment">Username</label>
+                <div class="control">
+                    <input type="text" name="username" class="input is-rounded is-hovered" type="text" placeholder="Username input" id="username">
+                </div>
+                <div class="help is-danger hide_element" id="name_danger">
+                    Invalid input. Please try again.
+                </div>
+                <div class="help is-danger hide_element" id="name_danger_empty">
+                    Invalid input. Cannot be empty.
+                </div>
+                <label class="label text_alignment">Password</label>
+                <div class="control">
+                    <input type="password" name="password" class="input is-rounded is-hovered" type="text" placeholder="Password input" id="password">
+                </div>
+                <div class="help is-danger hide_element" id="password_danger_empty">
+                    Invalid input. Cannot be empty
+                </div>
+                <div class="columns">
+                    <div class="column is-two-fifths"></div>
+                    <div class="column is-one-fifth button_shift">
+                        <button type="submit" class="button is-link is-rounded is-hovered" onclick="validate_data()">Login</button>
+                    </div>
+                </div>
+            </form>
+           <% if (error == "invalid") { %>
+           <script type="text/javascript">
+                 $('#name_danger').show();
+           </script>
+         
+           <% }  %>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function validate_data() {
+            var flag = [];
+            flag.push(name_validation("username") ? true : false);
+            flag.push(password_validation("password") ? true : false);
+            console.log(flag);
+
+            if (!flag.every(checking_true)) {
+                return false;
+            }
+            return true;
+        }
+
+        function checking_true(arr) {
+            return arr == true;
+        }
+
+        function password_validation(id) {
+            var input = document.getElementById(id).value;
+            if (input == "") {
+                document.getElementById(id).classList.add("is-warning");
+                $('#password_danger_empty').show();
+                return false;
+            }
+            else {
+                document.getElementById(id).classList.remove("is-warning");
+                $('#password_danger_empty').hide();
+                return true;
+            }
+        }
+
+        function name_validation(id) {
+            var input = document.getElementById(id).value;
+            var pattern = /^[a-zA-Z-,]+(\s{0,1}[a-zA-Z-, ])*$/;
+            if (input.match(pattern) == null && input != "") {
+                document.getElementById(id).classList.add("is-warning");
+                $('#name_danger').show();
+                $('#name_danger_empty').hide();
+                return false;
+            } else if (input == "") {
+                document.getElementById(id).classList.add("is-warning");
+                $('#name_danger_empty').show();
+                $('#name_danger').hide();
+                return false;
+            } else {
+                document.getElementById(id).classList.remove("is-warning");
+                $('#name_danger').hide();
+                $('#name_danger_empty').hide();
+                return true;
+            }
+        }
+    </script>
+    <% include partials/footer %>

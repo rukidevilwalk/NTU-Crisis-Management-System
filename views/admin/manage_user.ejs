@@ -1,0 +1,352 @@
+<!-- Author(s): Neo Kee Pin -->
+<% include ../partials/header %>
+<style>
+    .hide_element {
+        display: none;
+    }
+
+    .align_right {
+        float: right;
+        margin-right: 10px;
+    }
+
+    .custom_col {
+        width: 3%;
+    }
+    
+    .modal_style {
+        width: 90%;
+    }
+
+    .shift_but {
+        padding-left: 10px;
+    }
+</style>
+</head>
+
+<body>
+    <p class="menu-label" id="loggedInUser" name="<%= user.username %>" email="<%= user.email %>" contact="<%= user.contact_number %>"
+        role="<%= user.role %>"></p>
+    <div class="columns">
+        <div class="column is-one-fifth">
+            <button class="button align_right is-link" onclick="window.location.href='/admindashboard'">Back</button>
+        </div>
+        <div class="column is-three-fifths">
+            <table class="table is-fullwidth">
+                <thead>
+                    <tr>
+                        <th>
+                            <p>UserID</p>
+                        </th>
+                        <th>
+                            <p>Username</p>
+                        </th>
+                        <th>
+                            <p>Email</p>
+                        </th>
+                        <th>
+                            <p>Contact Number</p>
+                        </th>
+                        <th>
+                            <p>Role</p>
+                        </th>
+                        <th>
+                        </th>
+                        <th>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="manage_users_table">
+
+                    <!-- database details for user details here -->
+
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column is-three-fifths"></div>
+    </div>
+    <div class="modal" id="edit_form">
+        <div class="modal-background" onclick="refs.edit_form.close()"></div>
+        <div class="modal-content">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Edit User Information</p>
+                <button class="delete" onclick="refs.edit_form.close()" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body" id="logform">
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <input id="form_id" type="hidden" value="">
+                        <label class="label">Username</label>
+                    </div>
+                    <div class="field-body">
+
+                        <div class="field modal_style">
+                            <input type="text" class="input" placeholder="Input Username" id="form_username">
+                        </div>
+                        <div class="field">
+                            <p class="help is-danger hide_element" id="name_danger">Input name is
+                                invalid.
+                                Can only take in alphabet
+                            </p>
+                        </div>
+                        <div class="field">
+                            <p class="help is-danger hide_element" id="name_danger_empty">Input name is
+                                invalid.
+                                Cannot be empty.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Email</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field modal_style">
+                            <input type="text" class="input" placeholder="Input Name" id="form_email">
+                        </div>
+                        <div class="field">
+                            <p class="help is-danger hide_element" id="email_danger">Input email is
+                                invalid.
+                                Please enter a legit Email
+                            </p>
+                        </div>
+                        <div class="field">
+                            <p class="help is-danger hide_element" id="email_danger_empty">Input email is
+                                invalid.
+                                Cannot be empty.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Contact No.</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field modal_style">
+                            <input type="text" class="input" placeholder="Contact Number" id="form_contact">
+                        </div>
+                        <div class="field">
+                            <p class="help is-danger hide_element" id="contact_danger">Input contact is
+                                invalid.
+                                Only accept numbers
+                            </p>
+                        </div>
+                        <div class="field">
+                            <p class="help is-danger hide_element" id="contact_danger_empty">Input contact is
+                                invalid.
+                                Cannot be empty.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Role</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="select" name="role">
+                                <select id="role_form" name="role">
+                                    <option id="staff" name="role" value="staff">Staff</option>
+                                    <option id="minister" name="role" value="minister">Minister</option>
+                                    <option id="admin" name="role" value="admin">Admin</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="columns">
+                    <div class="column is-three-quarters"></div>
+                    <div class="custom_col"></div>
+                    <div class="column is-one-fifth">
+                        <button class="button is-success" id="uploadButton" onclick="upload_db()">Upload</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        /*** Socket io ***/
+
+        //Instantiate client of socket.io into admin namespace
+        var client = io()
+
+        // Sever tells client to request for new users data
+        client.on('getUsersUpdate', function (msg) {
+            console.log(msg)
+            // Request to the server to return users data then display data
+            client.emit('getUsers', function (usersData) {
+                displayUsers(usersData)
+            })
+        })
+
+        // Update exisitng user from input form 
+        function updateUser(newUser) {
+            client.emit('updateUser', newUser, function () {})
+        }
+
+        // Remove user from db based on id
+        function remove_user(user) {
+            user_id = $(user).parent().siblings('.user_id').text()
+            client.emit('deleteUser', user_id, function () {})
+        }
+
+        /*** Populate users table ***/
+
+        function displayUsers(usersData) {
+
+            $('#manage_users_table').empty()
+
+            // Resources table
+            for (let data of usersData) {
+                tr = document.createElement('tr');
+                user =
+                    "<td class='user_id'><p>" + data.id + "</p></td>" +
+                    "<td class='user_username'><p>" + data.username + "</p></td>" +
+                    "<td class='user_email'><p>" + data.email + "</p></td>" +
+                    "<td class='user_contact_number'><p>" + data.contact_number + "</p></td>" +
+                    "<td class='user_role'><p>" + data.role + "</p></td>" +
+                    "<td><button class='button is-info is-small' onclick='edit_user(this)'>" +
+                    "<span>Edit</span><span class='icon is-small'><i class='fas fa-edit'></i></span>" +
+                    "</button></td>" +
+                    "<td><button class='button is-danger is-small' onclick='remove_user(this)'>" +
+                    "<span>Delete</span><span class='icon is-small'><i class='fas fa-times'></i></span>" +
+                    "</button></td>";
+                tr.innerHTML = user
+                $('#manage_users_table').append(tr)
+
+            }
+
+        }
+
+        // For updating user details
+        function upload_db() {
+            // check if the data is empty or not
+            // and check if the data has the right format
+            if (validate_data()) {
+                // update database
+                selected_role_index = document.getElementById('role_form').selectedIndex
+                selected_role_value = document.getElementById('role_form').options[selected_role_index].value
+
+                userData = {
+                    id: document.getElementById('form_id').value,
+                    username: document.getElementById('form_username').value,
+                    email: document.getElementById('form_email').value,
+                    contact_number: document.getElementById('form_contact').value,
+                    role: selected_role_value
+                }
+                updateUser(userData)
+                refs.edit_form.close()
+
+                return;
+            }
+        }
+
+        function edit_user(user) {
+
+            document.getElementById('form_id').value = $(user).parent().siblings('.user_id').text()
+            document.getElementById('form_username').value = $(user).parent().siblings('.user_username').text()
+            document.getElementById('form_email').value = $(user).parent().siblings('.user_email').text()
+            document.getElementById('form_contact').value = $(user).parent().siblings('.user_contact_number').text()
+            document.getElementById($(user).parent().siblings('.user_role').text()).selected = true
+            refs.edit_form.open();
+        }
+
+        var refs = {
+            edit_form: {
+                open: function () {
+                    document.getElementById('edit_form').classList.add('is-active');
+                },
+                close: function () {
+                    document.getElementById('edit_form').classList.remove('is-active');
+                }
+            }
+        }
+
+        function checking_true(arr) {
+            return arr == true;
+        }
+
+        function validate_data() {
+            var flag = [];
+            flag.push(name_validation("form_username") ? true : false);
+            flag.push(email_validation("form_email") ? true : false);
+            flag.push(contact_validation("form_contact") ? true : false);
+
+            if (!flag.every(checking_true)) {
+                return false;
+            }
+            return true;
+        }
+
+        function name_validation(id) {
+            var input = document.getElementById(id).value;
+            var pattern = /^[a-zA-Z-,]+(\s{0,1}[a-zA-Z-, ])*$/;
+            if (input.match(pattern) == null && input != "") {
+                document.getElementById(id).classList.add("is-warning");
+                $('#name_danger').show();
+                $('#name_danger_empty').hide();
+                return false;
+            } else if (input == "") {
+                document.getElementById(id).classList.add("is-warning");
+                $('#name_danger_empty').show();
+                $('#name_danger').hide();
+                return false;
+            } else {
+                document.getElementById(id).classList.remove("is-warning");
+                $('#name_danger').hide();
+                $('#name_danger_empty').hide();
+                return true;
+            }
+        }
+
+        function contact_validation(id) {
+            var input = document.getElementById(id).value;
+            var pattern = /^([0-9]+)$/;
+            if (input.match(pattern) == null && input != "") {
+                document.getElementById(id).classList.add("is-warning");
+                $('#contact_danger').show();
+                $('#contact_danger_empty').hide();
+                return false;
+            } else if (input == "") {
+                document.getElementById(id).classList.add("is-warning");
+                $('#contact_danger_empty').show();
+                $('#contact_danger').hide();
+                return false;
+            } else {
+                document.getElementById(id).classList.remove("is-warning");
+                $('#contact_danger').hide();
+                $('#contact_danger_empty').hide();
+                return true;
+            }
+        }
+
+        function email_validation(id) {
+            var input = document.getElementById(id).value;
+            var pattern = /\S+@\S+/;
+            if (input.match(pattern) == null && input != "") {
+                document.getElementById(id).classList.add("is-warning");
+                $('#email_danger').show();
+                $('#email_danger_empty').hide();
+                return false;
+            } else if (input == "") {
+                document.getElementById(id).classList.add("is-warning");
+                $('#email_danger_empty').show();
+                $('#email_danger').hide();
+                return false;
+            } else {
+                document.getElementById(id).classList.remove("is-warning");
+                $('#email_danger').hide();
+                $('#email_danger_empty').hide();
+                return true;
+            }
+        }
+    </script>
+
+    <% include ../partials/footer %>

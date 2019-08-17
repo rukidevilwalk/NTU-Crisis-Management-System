@@ -1,0 +1,204 @@
+<!-- Author(s): Neo Kee Pin -->
+<div class="columns">
+    <div class="column is-one-third">
+        <div class="field">
+            <label class="label">Location</label>
+        </div>
+        <div class="control">
+            <input id="defaultSearch" type="text" class="input event-user" placeholder="Location Input">
+            <input id="dengueSearch" type="text" class="input hide_element" placeholder="Location Input">
+            <input id="psiSearch" type="text" class="input hide_element" placeholder="Location Input">
+            <input id="weatherSearch" type="text" class="input hide_element" placeholder="Location Input">
+            <input id="incidentSearch" type="text" class="input hide_element" placeholder="Location Input">
+        </div>
+    </div>
+    <div class="custom-col"></div>
+    <div class="column is-one-fifth hide_element" id="crisis">
+        <div class="field">
+            <label class="label" id="crisis_label">Crisis Level</label>
+        </div>
+        <div class="control">
+            <div class="select">
+                <select id="crisis_dropdown">
+                    <option id="allCrisis">Show All Crisis Level</option>
+                    <option id="noCrisis">Show Not Set</option>
+                    <option id="l1Crisis">Show Level 1</option>
+                    <option id="l2Crisis">Show Level 2</option>
+                    <option id="l3Crisis">Show Level 3</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="custom-col"></div>
+    <!-- <div class="column is-one-fifth hide_element" id="filter">
+        <div class="field">
+            <label class="label" id="filter_label">Filter</label>
+        </div>
+        <div class="control">
+            <div class="select" id="filter_dropdown">
+                <select>
+                    <option>All</option>
+                    <option>Others</option> 
+                </select>
+            </div>
+        </div>
+    </div> -->
+</div>
+<div class="columns" id="rendered_map">
+    <div class="column is-full boxed" id="default_map"></div>
+    <div class="column is-full boxed hide_element" id="incident_map"></div>
+    <div class="column is-full boxed hide_element" id="psi_map"></div>
+    <div class="column is-full boxed hide_element" id="dengue_map"></div>
+    <div class="column is-full boxed hide_element" id="weather_map"></div>
+</div>
+
+<script>
+function show_incident_map() {
+            if ($('#toggleIncidents').hasClass('selected_style')) {
+                document.getElementById('toggleIncidents').classList.remove('selected_style');
+                document.getElementById('toggleHeatMap').classList.remove('selected_style');
+                $('#incident_map').hide();
+                $('#incidentSearch').hide();
+                default_map();
+            } else {
+                document.getElementById('toggleIncidents').classList.add('selected_style');
+                document.getElementById('toggleDengueClusters').classList.remove('selected_style');
+                document.getElementById('togglePSI').classList.remove('selected_style');
+                document.getElementById('toggleWeather').classList.remove('selected_style');
+                $('#toggleHeatMap').show();
+
+                toggleMapVisibility("incident")
+            }
+        }
+
+        function show_heat_map() {
+            if ($('#toggleHeatMap').hasClass('selected_style')) {
+                document.getElementById('toggleHeatMap').classList.remove('selected_style');
+            } else {
+                document.getElementById('toggleHeatMap').classList.add('selected_style');
+                document.getElementById('toggleIncidents').classList.add('selected_style');
+                document.getElementById('toggleDengueClusters').classList.remove('selected_style');
+                document.getElementById('togglePSI').classList.remove('selected_style');
+                document.getElementById('toggleWeather').classList.remove('selected_style');
+
+                if ($('#incident_map').is(":hidden")) {
+                    toggleMapVisibility("incident")
+                }
+            }
+        }
+
+        function show_dengue_map() {
+            if ($('#toggleDengueClusters').hasClass('selected_style')) {
+                document.getElementById('toggleDengueClusters').classList.remove('selected_style');
+                $('#dengue_map').hide();
+                $('#dengueSearch').hide();
+                default_map();
+            } else {
+                document.getElementById('toggleDengueClusters').classList.add('selected_style');
+                document.getElementById('togglePSI').classList.remove('selected_style');
+                document.getElementById('toggleWeather').classList.remove('selected_style');
+                document.getElementById('toggleHeatMap').classList.remove('selected_style');
+                document.getElementById('toggleIncidents').classList.remove('selected_style');
+                $('#toggleHeatMap').hide();
+                $('#crisis').hide();
+                $('#filter').hide();
+                toggleMapVisibility("dengue")
+            }
+        }
+
+        function show_psi_map() {
+            if ($('#togglePSI').hasClass('selected_style')) {
+                document.getElementById('togglePSI').classList.remove('selected_style');
+                $('#psi_map').hide();
+                $('#psiSearch').hide();
+                default_map();
+            } else {
+                document.getElementById('togglePSI').classList.add('selected_style');
+                document.getElementById('toggleWeather').classList.remove('selected_style');
+                document.getElementById('toggleHeatMap').classList.remove('selected_style');
+                document.getElementById('toggleIncidents').classList.remove('selected_style');
+                document.getElementById('toggleDengueClusters').classList.remove('selected_style');
+                $('#toggleHeatMap').hide();
+                toggleMapVisibility("psi")
+            }
+        }
+
+        function show_weather_map() {
+            if ($('#toggleWeather').hasClass('selected_style')) {
+                document.getElementById('toggleWeather').classList.remove('selected_style');
+                $('#weather_map').hide();
+                $('#weatherSearch').hide();
+                default_map();
+            } else {
+                document.getElementById('toggleWeather').classList.add('selected_style');
+                document.getElementById('toggleHeatMap').classList.remove('selected_style');
+                document.getElementById('toggleIncidents').classList.remove('selected_style');
+                document.getElementById('toggleDengueClusters').classList.remove('selected_style');
+                document.getElementById('togglePSI').classList.remove('selected_style');
+                $('#toggleHeatMap').hide();
+                toggleMapVisibility("weather")
+            }
+        }
+
+        function default_map() {
+            if ($('rendered_map').children(':visible').length == 0) {
+                $('#default_map').show();
+                $('#defaultSearch').show();
+                $('#toggleHeatMap').hide();
+                $('#crisis').hide();
+
+            }
+            return;
+        }
+
+        function toggleMapVisibility(map) {
+            //Hide all maps
+            $('#default_map').hide();
+            $('#incident_map').hide();
+            $('#psi_map').hide();
+            $('#weather_map').hide();
+            $('#dengue_map').hide();
+
+            //Hide all map search boxes
+            $('#defaultSearch').hide();
+            $('#incidentSearch').hide();
+            $('#psiSearch').hide();
+            $('#weatherSearch').hide();
+            $('#dengueSearch').hide();
+
+            // hide filter and crisis
+            $('#crisis').hide();
+            //$('#filter').hide();
+
+            //Show specific map and search box
+            switch (map) {
+                case "default":
+                    $('#default_map').show();
+                    $('#defaultSearch').show();
+                    break;
+
+                case "incident":
+                    $('#incident_map').show();
+                    $('#incidentSearch').show();
+                    $('#crisis').show();
+                   // $('#filter').show();
+                    break;
+
+                case "psi":
+                    $('#psi_map').show();
+                    $('#psiSearch').show();
+                    break;
+
+                case "weather":
+                    $('#weather_map').show();
+                    $('#weatherSearch').show();
+                    break;
+
+                case "dengue":
+                    $('#dengue_map').show();
+                    $('#dengueSearch').show();
+                    break;
+            }
+
+        }
+</script>

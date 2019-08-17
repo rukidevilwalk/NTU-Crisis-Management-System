@@ -1,0 +1,194 @@
+<!-- Author(s): Neo Kee Pin -->
+<% include ../partials/header %>
+<style>
+    .alert-box {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        padding: 15px;
+        margin-bottom: 20px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+    }
+
+    .success {
+        color: #3c763d;
+        background-color: #dff0d8;
+        border-color: #d6e9c6;
+        display: none;
+    }
+
+    .failure {
+        color: #a94442;
+        background-color: #f2dede;
+        border-color: #ebccd1;
+        display: none;
+    }
+
+    .top_element {
+        padding-top: 15px;
+        font-size: 18px;
+    }
+
+    .header_column {
+        padding-top: 30px;
+        max-height: 50%;
+        padding-left: 10px;
+    }
+
+    .header_text {
+        font-size: 40px;
+        text-align: left;
+        font: bold;
+    }
+
+    .header_row {
+        padding-top: 15px;
+    }
+
+    .subtitle_label {
+        text-align: center;
+        font-size: 30px;
+    }
+
+    .boxed {
+        border: solid 1px black;
+        min-height: 600px;
+    }
+
+    .custom-col {
+        width: 7%;
+    }
+
+    .information_text {
+        color: white;
+    }
+
+    #floating-panel {
+        padding: 0px;
+        text-align: center;
+        font-family: 'Roboto', 'sans-serif';
+    }
+
+    #floating-panel {
+        margin-bottom: 15px;
+    }
+
+    #sidenav {
+        padding-left: 20px;
+    }
+
+    .cd-side-nav {
+        position: absolute;
+        
+        left: 0;
+        top: 0;
+        width: 100%;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.2s 0s, visibility 0s 0.2s;
+    }
+
+    .cd-side-nav.nav-is-visible {
+        opacity: 1;
+        visibility: visible;
+        transition: opacity 0.2s 0s, visibility 0s 0s;
+    }
+
+    @media only screen and (min-width: 768px) {
+        .cd-side-nav {
+            position: relative;
+            float: left;
+            width: 110px;
+            /* reset style */
+            visibility: visible;
+            opacity: 1;
+        }
+    }
+
+    @media only screen and (min-width: 768px) {
+        .cd-main-content .content-wrapper {
+            margin-left: 110px;
+        }
+    }
+
+    .navigation_button {
+        float: left;
+    }
+
+    .hide_element {
+        display: none;
+    }
+
+    #toggleHeatMap {
+        padding-left: 30px;
+        display: none;
+    }
+
+    .des_stype {
+        min-height: 300px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .modal_style {
+        width: 90%;
+    }
+
+    a.selected_style {
+        font-size: bold;
+        color: lightgreen;
+    }
+
+    .modal_custom {
+        width: 100%;
+    }
+
+    .modal_broadcast_custom {
+        width: 350px;
+    } 
+
+    .float_right {
+        float: right;
+    }
+
+    .twitter_span {
+        padding: 0px;
+        margin: 0px;
+    }
+
+    .button_custom {
+        margin-top: 5px;
+    }
+
+    .modal_custom_col {
+        width: 4%;
+    }
+
+    .modal_email_custom_col {
+        width: 3%;
+    }
+
+    .modal_crisis_custom_col {
+        width: 13%;
+    }
+
+    .alert_crisis {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+</style>
+</head>
+
+<body>
+    
+    <div class="columns">
+        <% include dashboard_partials/db_sidenavbar %>
+        <% include dashboard_partials/db_topnavbar %>
+        <% include dashboard_partials/db_map %>
+    </div>
+
+
+    <% include dashboard_partials/db_scripts %>
+    <% include ../partials/footer %>

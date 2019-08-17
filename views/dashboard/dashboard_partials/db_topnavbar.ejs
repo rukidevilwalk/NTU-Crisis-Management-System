@@ -1,0 +1,58 @@
+<!-- Author(s): Neo Kee Pin -->
+<div class="column is-three-quarters">
+    <div class="columns">
+        <div class="column is-half">
+            <p class="header_text header_row">Dashboard</p>
+        </div>
+        <div class="column is-one-fifth">
+            <div class="field ">
+                <label class="label header_row">Today's PSI</label>
+            </div>
+            <div class="panel-stats col-md-4 col-xs-12 col-sm-4">
+                <div class="panel-stats-value-holder">
+                    <span>PSI Overall: </span>
+                    <span id="psi-panel-stats-unit" class="unit" style="font-weight: bold; color: rgb(71, 155, 2);">-</span>
+                </div>
+                <span id="psi-panel-stats-wrapper"></span>
+            </div>
+        </div>
+        <div class="column is-one-fifth">
+            <div class="field">
+                <label class="label header_row">Today's Weather</label>
+            </div>
+            <div class="panel-stats col-md-4 col-xs-12 col-sm-4">
+                <div class="panel-stats-value-holder">
+                    <span id="24hr-panel-stats-unit" class="unit" style="font-weight: bold; color: rgb(71, 155, 2);"></span>
+                </div>
+                <div class="panel-stats-value-holder">
+                    <span>Temperature: </span>
+                    <span id="temperature-panel-stats-wrapper"></span>
+                </div>
+                <div class="panel-stats-value-holder">
+                    <span>Humidity: </span>
+                    <span id="humidity-panel-stats-wrapper"></span>
+                </div>
+                <div class="panel-stats-value-holder">
+                    <span>Wind: </span>
+                    <span id="wind-panel-stats-wrapper"></span>
+                </div>
+            </div>
+        </div>
+        <div class="column is-one-fifth">
+            <div class="field ">
+                <button id="logout" class="button is-text" style="text-decoration-line: none;">Logout</button>
+            </div>
+
+        </div>
+    </div>
+ 
+<script>
+$(document).ready(function () {
+
+//Log out current user from session and return to login page
+$("#logout").click(function () {
+    window.location.replace("/logout")
+})
+
+})
+</script>
