@@ -6,7 +6,7 @@
   "dependencies": {
     "@google/maps": "^0.5.5",
     "@mapbox/togeojson": "^0.16.0",
-    "acorn": "^6.0.2",
+    "acorn": "^6.4.1",
     "babel-core": "^6.26.3",
     "babel-jest": "^23.6.0",
     "cookie-parser": "^1.4.3",
